@@ -33,7 +33,7 @@ options {
     sh "mvn clean package"
     }
     }
-    
+    /*
     //Execute SonarQube Report
     stage('SonarQubeReport'){
     steps{
@@ -56,7 +56,7 @@ options {
 	}
 	}
 	}
-
+*/
  }//Stages Closing
  
   post {
