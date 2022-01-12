@@ -10,7 +10,7 @@ node
  stage('Build'){
  sh "${mavenHome}/bin/mvn clean package"
  }
- 
+ /*
  stage('ExecuteSonarQubeReport'){
  sh "${mavenHome}/bin/mvn sonar:sonar"
  }
@@ -32,5 +32,5 @@ node
  Chandra Technologies,
  9986998659''', subject: 'Build Over..', to: 'chandrabrand3452@gmail.com'
  }
- 
+ */
 } 
