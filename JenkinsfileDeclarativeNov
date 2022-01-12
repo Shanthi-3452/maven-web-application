@@ -1,0 +1,88 @@
+pipeline{
+
+agent any
+
+tools{
+maven 'maven3.8.4'
+}
+
+triggers {
+  pollSCM ('* * * * *')
+  //cron ('* * * * *,)
+}
+
+options {
+  //Add the Timestamp to the console output
+  timestamps()
+  //Discard Old Builds
+   buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')
+}
+
+ stages{
+ 
+    //Get the code from Github
+	stage('CheckoutCode'){
+	steps{
+	  git branch: 'development', credentialsId: 'aa1ea2c6-1508-4987-bd3c-0f996086ce0b', url: 'https://github.com/Shanthi-3452/maven-web-application.git'
+	  }
+	  }
+	 
+    //Do the build
+    stage('Build'){
+    steps{
+    sh "mvn clean package"
+    }
+    }
+    
+    //Execute SonarQube Report
+    stage('SonarQubeReport'){
+    steps{
+    sh "mvn sonar:sonar"
+    }
+    }
+    
+    //Upload Artifact Into Nexus Server
+	stage('UploadArtifactIntoNexusServer'){
+    steps{
+    sh "mvn deploy"
+    }
+    }
+    
+    //Deploy App Into Tomcat Server
+	stage('DeployAppIntoTomactServer'){
+	steps{
+	sshagent(['d496b35c-7162-4146-96d8-0349729c981d']) {
+    sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@3.7.68.182:/opt/apache-tomcat-9.0.56/webapps/"
+	}
+	}
+	}
+
+ }//Stages Closing
+ 
+  post {
+  always {
+    emailext body: '''Build Over,
+
+ Regards,
+ Chandra Technologies,
+ 9986998659''', subject: 'Build Over..', to: 'chandrabrand3452@gmail.com'
+ }
+  
+  success {
+    emailext body: '''Build Over..success
+
+ Regards,
+ Chandra Technologies,
+ 9986998659''', subject: 'Build Over..', to: 'chandrabrand3452@gmail.com'
+ }
+  
+  failure {
+    emailext body: '''Build Over..Failure
+
+ Regards,
+ Chandra Technologies,
+ 9986998659''', subject: 'Build Over..', to: 'chandrabrand3452@gmail.com'
+ }
+  
+}//Pipeline Closing 
+}
