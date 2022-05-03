@@ -1,0 +1,26 @@
+pipeline{
+    agent any
+    
+    stages{
+        stage("Git Checkout"){
+            steps{
+                git credentialsId: 'jenkinshome', url: 'https://github.com/Shanthi-3452/maven-web-application.git'
+
+                
+            }
+        }
+        stage("Maven Build"){
+            steps{
+                sh "mvn clean package"
+            }
+        }
+        stage("deployintoTomcat"){
+            step{
+                sshagent(['tomcat-new']) {
+                    sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@172.31.30.56:/opt/apache-tomcat-9.0.62/webapps/" 
+    // some block
+            }
+            }
+        }
+    }
+}
