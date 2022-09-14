@@ -5,6 +5,11 @@ stage('CheckoutCode')
 {
     git branch: 'development', credentialsId: '1d420f11-932b-4a6f-a1b3-80c96a774b54', url: 'https://github.com/Shanthi-3452/maven-web-application.git'
 }
+
+echo "Job name is: "${env.JOB_NAME}
+echo "Node name is: "${env.NODE_NAME}
+echo "Build number is: "${env.BUILD_NUMBER}
+
 stage('Build')
 {
     sh "${mavenHome}/bin/mvn clean package"
